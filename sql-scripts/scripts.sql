@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS invoice_app_users (
+    id INT NOT NULL AUTO_INCREMENT,
+    username VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(500) NOT NULL,
+)
