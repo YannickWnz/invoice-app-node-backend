@@ -4,7 +4,7 @@ import { query, validationResult } from 'express-validator'
 
 const createInvoice = (req, res, next) => {
 
-    console.log(req.body)
+    // console.log(req.body)
 
     const {
         receiptNo, 
@@ -63,10 +63,65 @@ const createInvoice = (req, res, next) => {
 
     } )
 
+}
 
+const getUserInvoice = (req, res) => {
 
-    // return res.json({message: 'got it'})
+    
+    let token = req.params.userToken
+
+    const fetchInvoice = 'SELECT * FROM invoice WHERE token = ?'
+
+    db.query(fetchInvoice, [token],(err, results) => {
+
+        if(err) { return res.status(400).json({err}) }
+
+        // console.log(results)
+
+        return res.status(200).json(results)
+
+    })
 
 }
 
-export default createInvoice
+const getSelectedInvoice = (req, res) => {
+
+    let id = req.params.id
+
+    console.log(id)
+
+    const fetchSelectedInvoice = 'SELECT * FROM invoice WHERE invoiceID = ?'
+
+    db.query(fetchSelectedInvoice, [id], (err, results) => {
+
+        if(err) { return res.status(400).json({err}) }
+
+        console.log(results)
+
+        return res.status(200).json(results)
+
+    })
+
+
+}
+
+const updateInvoiceStatus = (req, res) => {
+
+    let id = req.params.id
+
+    const updateStatusQuery = `UPDATE invoice SET invoiceStatus = 'Paid' WHERE invoiceID = ?`
+
+    db.query(updateStatusQuery, [id],(err, results) => {
+
+        if(err) { return res.status(400).json({err}) }
+
+        return res.status(200).json({Message: 'Invoice status updated successfully'})
+
+    })
+
+
+}
+
+export {createInvoice, getUserInvoice, getSelectedInvoice, updateInvoiceStatus}
+// export default createInvoice
+// export default getUserInvoice
