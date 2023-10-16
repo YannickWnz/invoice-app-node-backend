@@ -65,6 +65,85 @@ const createInvoice = (req, res, next) => {
 
 }
 
+const updateInvoice = (req, res, next) => {
+
+    const {
+        invoiceID,
+        billFromStreetAddress, 
+        countryBillFrom,
+        cityBillFrom,
+        postCodeBillFrom,
+        clientName,
+        clientEmail,
+        clientAddress,
+        clientCity,
+        clientPostCode,
+        clientCountry,
+        dateOfIssue,
+        termsOfPayment,
+        dueDate,
+        projectDescription,
+        listitems,
+        sumOfTotalPrice,
+        token
+    } 
+    = req.body
+
+    // const updateInvoiceQuery = 'INSERT INTO invoice (streetAddressBillFrom, cityBillFrom, postCodeBillFrom, CountryBillFrom, clientName, clientEmail, clientAddress, clientCity, clientPostCode, clientCountry, paymentTerms, dueDate, projectDescription, item_list, itemsTotalPrice, token) VALUES (?) WHERE token = ?';
+
+    const updateInvoiceQuery = `
+        UPDATE invoice 
+        SET 
+            streetAddressBillFrom = ?, 
+            cityBillFrom = ?, 
+            postCodeBillFrom = ?, 
+            CountryBillFrom = ?, 
+            clientName = ?, 
+            clientEmail = ?, 
+            clientAddress = ?, 
+            clientCity = ?, 
+            clientPostCode = ?, 
+            clientCountry = ?, 
+            paymentTerms = ?, 
+            dueDate = ?, 
+            projectDescription = ?, 
+            item_list = ?, 
+            itemsTotalPrice = ?
+        WHERE invoiceID = ?`;
+
+
+    const invoiceDetails = [
+        billFromStreetAddress, 
+        cityBillFrom,
+        postCodeBillFrom,
+        countryBillFrom,
+        clientName,
+        clientEmail,
+        clientAddress,
+        clientCity,
+        clientPostCode,
+        clientCountry,
+        termsOfPayment,
+        dueDate,
+        projectDescription,
+        listitems,
+        sumOfTotalPrice,
+        invoiceID
+    ]
+
+    // return res.json(invoiceDetails)
+
+    db.query(updateInvoiceQuery, invoiceDetails, (err, results) => {
+
+        if(err) { return res.status(400).json({err}) }
+
+        return res.status(200).json({Message: 'Invoice updated successfully'})
+
+    } )
+    
+
+}
+
 const getUserInvoice = (req, res) => {
 
     
@@ -88,7 +167,7 @@ const getSelectedInvoice = (req, res) => {
 
     let id = req.params.id
 
-    console.log(id)
+    // console.log(id)
 
     const fetchSelectedInvoice = 'SELECT * FROM invoice WHERE invoiceID = ?'
 
@@ -96,7 +175,7 @@ const getSelectedInvoice = (req, res) => {
 
         if(err) { return res.status(400).json({err}) }
 
-        console.log(results)
+        // console.log(results)
 
         return res.status(200).json(results)
 
@@ -119,9 +198,27 @@ const updateInvoiceStatus = (req, res) => {
 
     })
 
+}
+
+const deleteInvoice = (req, res) => {
+
+    let id = req.params.id
+
+    const deleteInvoiceQuery = `DELETE FROM invoice WHERE invoiceID = ?`
+
+    db.query(deleteInvoiceQuery, [id],(err, results) => {
+
+        if(err) { return res.status(400).json({err}) }
+
+        return res.status(200).json({Message: 'Invoice deleted successfully'})
+
+    })
+
 
 }
 
-export {createInvoice, getUserInvoice, getSelectedInvoice, updateInvoiceStatus}
+
+
+export {createInvoice,updateInvoice, getUserInvoice, getSelectedInvoice, updateInvoiceStatus, deleteInvoice}
 // export default createInvoice
 // export default getUserInvoice
